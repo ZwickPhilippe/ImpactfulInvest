@@ -4,6 +4,7 @@ import pandas as pd
 from repository import ESGData, FinancialDataAPI
 from util.RecommenderSystem import Recommender
 from typing import List
+import json
 
 app = Flask(__name__)
 
@@ -39,7 +40,9 @@ def get_stock_data():
 def get_esg_data():
     isin = request.args.get("isin")
     esg_data = esg.getESGdata(isin)
-    return jsonify(esg_data)
+    data = json.loads(jsonify(esg_data))
+    data['stock_data'] = fin.provideEndOfDayHistory("ISIN_BC", isin, "2023-03-22", "2024-03-22")
+    return jsonify(data)
 
 @app.route('/api/recommendation', methods=['GET'])
 def getRecommendations():
@@ -50,7 +53,11 @@ def getRecommendations():
 @app.route('/api/compare-suggestion', methods=['GET'])
 def getCompareSuggestion():
     suggestion = recommender.getCompareSuggestion()
-    return getWholeData(suggestion)
+    data = json.loads(getWholeData(suggestion))
+    print(data)
+    for f in data:
+        f['stock_data'] = fin.provideEndOfDayHistory("ISIN_BC", f['ISIN_BC'], "2023-03-21", "2024-03-21")
+    return jsonify(data)
 
 @app.route('/api/update-preferences', methods=['POST'])
 def updatePreferences():
