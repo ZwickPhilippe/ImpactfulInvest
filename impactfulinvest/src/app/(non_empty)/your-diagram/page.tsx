@@ -48,7 +48,9 @@ export default function Page() {
 				<div className='grid grid-cols-2 gap-4'>
 					{data.map((d, i) => {
 						return <Input
+								key={i}
 								value={d.value.toString()}
+								type='number'
 								min={0}
 								max={100}
 								onChange={(e) => {
@@ -68,16 +70,25 @@ export default function Page() {
 									})	
 								}} 
 								label={d.key}
-								type={InputType.Basic}/>
+								inputType={InputType.Basic}/>
 					})}
 				</div>
-				<div className=''>
-					<h3>
-						What this chart tells us about you
-					</h3>
-					<div>
+			</div>
+			<div className='flex mb-8'>
+				<h3>
+					What this chart tells us about you
+				</h3>
+				<div>
 
-					</div>
+				</div>
+			</div>
+			<div className='flex justify-end'>
+				<div className='w-24'>
+					<Button className='' buttonColor={ButtonColor.Black} onClick={() => {
+						window.location.href = '/list';
+					}}>
+						Continue
+					</Button>
 				</div>
 			</div>
 		</div>
