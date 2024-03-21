@@ -58,6 +58,7 @@ def getCompareSuggestion():
     data = json.loads(getWholeData(suggestion))
     print(data)
     for f in data:
+        print(f['ISIN_BC'])
         f['stock_data'] = fin.provideEndOfDayHistory("ISIN_BC", f['ISIN_BC'], "2023-03-21", "2024-03-21")
     return jsonify(data)
 

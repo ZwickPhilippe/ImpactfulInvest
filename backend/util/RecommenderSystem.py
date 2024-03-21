@@ -2,8 +2,6 @@ import pandas as pd
 import numpy as np
 from typing import List, Tuple
 
-from sklearn.svm import SVC
-
 
 ItemPairType = Tuple[str, str]
 IDENTIFIER = 'ISIN_BC'
@@ -13,7 +11,7 @@ class Recommender:
     items: pd.DataFrame
     model: np.ndarray
 
-    def __init__(self, data_source: pd.DataFrame, gamma: float = 0.2):
+    def __init__(self, data_source: pd.DataFrame, gamma: float = 0.4):
         self.items = data_source
         self.gamma = gamma
         self.model = None
@@ -88,10 +86,18 @@ class Recommender:
             probs = scores / scores.sum()
             print(probs)
             return np.random.choice(self.items['name'], size=n, p=probs)
+        
+    def getPreferences(self):
+        # softmax of model
+        params = self.model.astype(np.float32)
+        Z = np.exp(params).sum()
+        ps = np.exp(params) / Z
+        return {k: ps[i] for i, k in enumerate(self.items.keys()[1:])}
 
 
 if __name__ == '__main__':
-    recommender = Recommender('C:/Users/laure/OneDrive/Desktop/StartHack/RecommenderSystem/clustered_dummy_data.csv')
+    IDENTIFIER = 'name'
+    recommender = Recommender(pd.read_csv('C:/Users/laure/OneDrive/Desktop/StartHack/RecommenderSystem/clustered_dummy_data.csv'))
     print(recommender.getCompareSuggestion())
     print(recommender.getRecommendation())
     while True:
@@ -101,4 +107,5 @@ if __name__ == '__main__':
         answer = input('Which one do you prefer? [0 or 1]\n > ')
         recommender.updatePreferences(query, bool(int(answer)))
         print("Recommendation: ", recommender.getRecommendation(deterministic=True, n=20))
+        print("Model: ", recommender.getPreferences())
     
