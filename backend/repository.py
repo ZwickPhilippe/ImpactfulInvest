@@ -73,6 +73,19 @@ class FinancialDataAPI:
         }
         return self._http_request(end_point, query_string)
 
+    def getEndOfDayHistoryMult(self, scheme: str, listings: List[str], dateFrom: str, dateTo: str = '') -> Dict[str, Any]:
+        """
+        Retrieve End of Day Timeseries data.
+        """
+        end_point = "/v1/listings/marketData/endOfDayHistory"
+        query_string = {
+            'scheme': scheme,
+            'ids': ",".join(listings),
+            'dateFrom': dateFrom,
+            'dateTo': dateTo
+        }
+        return self._http_request(end_point, query_string)
+
     def provideEndOfDayHistory(self, scheme: str, listing: str, dateFrom: str = '', dateTo: str = '') -> Dict[str, Any]:
         data = self.getEndOfDayHistory(scheme, listing, dateFrom, dateTo)["data"]["listings"][0]
         data_dict = {}
@@ -85,3 +98,26 @@ class FinancialDataAPI:
                 elif "close" in day:
                     data_dict[day["sessionDate"]] = day["close"]
         return data_dict
+
+    def provideEndOfDayHistoryMult(self, scheme: str, listings: List[str], dateFrom: str = '', dateTo: str = '') -> Dict[str, Any]:
+        data = self.getEndOfDayHistoryMult(scheme, listings, dateFrom, dateTo)["data"]
+
+        closing_prices = {}
+
+        if "listings" in data:
+            for listing in data["listings"]:
+                if listing["lookupStatus"] == "FOUND":
+                    listing_name = listing["lookup"]["listingShortName"]
+                    closing_prices[listing_name] = {}
+
+                for history in listing["marketData"]["endOfDayHistory"]:
+                    if "closingBid" in history:
+                        closing_price = history["close"]
+                    elif "last" in history:
+                        closing_price = history["last"]
+                    elif "close" in history:
+                        closing_price = history["close"]
+                    date = history["sessionDate"]
+                    closing_prices[listing_name][date] = closing_price
+        print(closing_price)
+        return closing_prices

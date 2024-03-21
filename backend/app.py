@@ -55,11 +55,11 @@ def getRecommendations():
 @app.route('/api/compare-suggestion', methods=['GET'])
 def getCompareSuggestion():
     suggestion = recommender.getCompareSuggestion()
+    print(suggestion)
     data = json.loads(getWholeData(suggestion))
-    print(data)
-    for f in data:
-        print(f['ISIN_BC'])
-        f['stock_data'] = fin.provideEndOfDayHistory("ISIN_BC", f['ISIN_BC'], "2023-03-21", "2024-03-21")
+    temp = fin.provideEndOfDayHistoryMult("ISIN_BC", list(suggestion), "2023-03-21", "2024-03-21")
+    for i, d in enumerate(data):
+        d["stock_data"] = temp[list(temp.keys())[i]]
     return jsonify(data)
 
 @app.route('/api/update-preferences', methods=['POST'])
