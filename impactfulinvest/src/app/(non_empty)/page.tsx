@@ -102,11 +102,19 @@ export default function Home() {
 
     const res2 = await fetch(`http://127.0.0.1:5000/api/esg-data?isin=${recs[0]}`);
     const stock1 = await res2.json();
+    console.log(stock1);
 
     const res3 = await fetch(`http://127.0.0.1:5000/api/esg-data?isin=${recs[1]}`);
     const stock2 = await res3.json();
-    console.log(stock1);
     console.log(stock2);
+
+    const openai0 = await fetch(`http://127.0.0.1:5000/api/openAI?isin=${recs[0]}`);
+    console.log(openai0);
+
+    const openai1 = await fetch(`http://127.0.0.1:5000/api/openAI?isin=${recs[1]}`);
+    console.log(openai1);
+
+    setStock([stock1, stock2]);
   }
 
   useEffect(() => {
