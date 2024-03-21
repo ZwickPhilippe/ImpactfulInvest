@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from repository import ESGData, FinancialDataAPI
 from util.RecommenderSystem import Recommender
+from typing import List
 
 app = Flask(__name__)
 
@@ -18,6 +19,11 @@ def generate_stock_data():
     np.random.seed(42)  # For consistent results, remove in real applications
     prices = np.random.normal(loc=100, scale=10, size=100).tolist()
     return prices
+
+
+def getWholeData(isins: List[str]):
+    return esgData[esgData['ISIN_BC'].isin(isins)].to_json(orient="records")
+
 
 @app.route('/api/stock-data', methods=['GET'])
 def get_stock_data():
@@ -39,12 +45,12 @@ def get_esg_data():
 def getRecommendations():
     n = request.args.get("n", default=5, type=int)
     recommendations = list(recommender.getRecommendation(n=n, deterministic=True))
-    return recommendations #esgData[esgData['ISIN_BC'].isin(recommendations)].to_json(orient="records", lines=True)
+    return getWholeData(recommendations)
 
 @app.route('/api/compare-suggestion', methods=['GET'])
 def getCompareSuggestion():
     suggestion = recommender.getCompareSuggestion()
-    return jsonify(suggestion)
+    return getWholeData(suggestion)
 
 @app.route('/api/update-preferences', methods=['POST'])
 def updatePreferences():
