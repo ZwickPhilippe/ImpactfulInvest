@@ -11,7 +11,7 @@ export function Tab({
   }) {
 	return <>
 		{Object.values(elements).map((el, index) => {
-			return <div key={index} className={`cursor-pointer p-2 transition-all
+			return <div key={index} className={`cursor-pointer p-2 transition-all shadow
 				${index === 0 ? 'rounded-l-full pl-4' : ''}
 				${index === elements.length - 1 ? 'rounded-r-full pr-4' : ''}
 				${element === el ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-200'}
