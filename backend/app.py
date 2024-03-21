@@ -1,12 +1,16 @@
 from flask import Flask, jsonify, request
 import numpy as np
+import pandas as pd
 from repository import ESGData, FinancialDataAPI
-
+from util.RecommenderSystem import Recommender
 
 app = Flask(__name__)
 
-esg = ESGData("../data/ESGData.csv")
+esgData = pd.read_csv("../data/ESGData.csv", delimiter=";")
+
+esg = ESGData(esgData)
 fin = FinancialDataAPI("../api-keys")
+recommender = Recommender(esgData, gamma=0.2)
 
 # Simulate stock time series data as a list of 100 numbers
 def generate_stock_data():
@@ -20,6 +24,8 @@ def get_stock_data():
     isin = request.args.get("isin")
     dateFrom = request.args.get("dateFrom")
     dateTo = request.args.get("dateTo")
+
+    print(isin, dateFrom, dateTo)
     stock_data = fin.provideEndOfDayHistory("ISIN_BC", isin, dateFrom, dateTo)
     return jsonify(stock_data)
 
@@ -28,6 +34,25 @@ def get_esg_data():
     isin = request.args.get("isin")
     esg_data = esg.getESGdata(isin)
     return jsonify(esg_data)
+
+@app.route('/api/recommendation', methods=['GET'])
+def getRecommendations():
+    n = request.args.get("n", default=5, type=int)
+    recommendations = list(recommender.getRecommendation(n=n, deterministic=True))
+    return recommendations #esgData[esgData['ISIN_BC'].isin(recommendations)].to_json(orient="records", lines=True)
+
+@app.route('/api/compare-suggestion', methods=['GET'])
+def getCompareSuggestion():
+    suggestion = recommender.getCompareSuggestion()
+    return jsonify(suggestion)
+
+@app.route('/api/update-preferences', methods=['POST'])
+def updatePreferences():
+    data = request.get_json()
+    pair = data["pair"]
+    preference = data["preference"]
+    recommender.updatePreferences(pair, preference)
+    return "OK"
 
 if __name__ == '__main__':
     app.run(debug=True)

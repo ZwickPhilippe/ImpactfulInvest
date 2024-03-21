@@ -5,10 +5,10 @@ import json
 from typing import List, Dict, Any
 
 class ESGData:
-    def __init__(self, path):
-        self.data = pd.read_csv(path, sep=";")
+    def __init__(self, dataset):
+        self.data = dataset
 
-    def getESGdata(self, isin: str) -> dict[str, any]:
+    def getESGdata(self, isin: str) -> Dict[str, any]:
         esg_data_row = self.data[self.data["ISIN_BC"] == isin]
         esg_data = esg_data_row.to_dict("records")[0]
         return esg_data
