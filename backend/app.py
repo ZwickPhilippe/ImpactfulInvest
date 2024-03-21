@@ -84,5 +84,12 @@ def getPortfolioSummary():
     portfolio = getWholeData(portfolio)
     return aiService.getPortfolioSummary(portfolio)
 
+@app.route('/api/preferences', methods=['GET'])
+def getPreferences():
+    prefs = recommender.getPreferences()
+    print(prefs)
+    return jsonify(prefs)
+
+
 if __name__ == '__main__':
     app.run(debug=True)

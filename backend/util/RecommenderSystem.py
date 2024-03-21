@@ -89,10 +89,13 @@ class Recommender:
         
     def getPreferences(self):
         # softmax of model
+        if self.model is None:
+            return {k: 0 for k in self.items.keys()[1:]}
+        
         params = self.model.astype(np.float32)
         Z = np.exp(params).sum()
         ps = np.exp(params) / Z
-        return {k: ps[i] for i, k in enumerate(self.items.keys()[1:])}
+        return {k: float(ps[i]) for i, k in enumerate(self.items.keys()[1:])}
 
 
 if __name__ == '__main__':
