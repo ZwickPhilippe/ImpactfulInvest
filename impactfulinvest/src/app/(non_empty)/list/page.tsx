@@ -1,6 +1,6 @@
 'use client';
 import React, { useRef, useEffect, useState, useContext } from 'react';
-import { Button, ButtonColor, ButtonSize, Input, InputType, Svg } from '@/components/elements';
+import { Button, ButtonColor, ButtonShape, ButtonSize, Input, InputType, Svg } from '@/components/elements';
 import Radar from '@/components/charts/radar';
 import { Tab } from '@/components/elements/tab';
 import { STOCKS } from '@/utils/const';
@@ -30,9 +30,19 @@ export default function Page() {
   }, []);
 
   return <div className='max-w-screen-lg pb-8 mx-auto'>
-		<h1 className='semibold mx-auto mb-4ap'>
-			Stocks which could be interesting to you
-		</h1>
+		<div className='flex justify-between'>
+			<h1 className='semibold mb-4'>
+				Stocks which could be interesting to you
+			</h1>
+			<div className='w-40'>
+				<Button disabled={stocks.length === 0}
+						buttonColor={ButtonColor.Black}
+						buttonShape={ButtonShape.Round}
+						buttonSize={ButtonSize.Small}>
+					Your porfolio ({stocks.length})
+				</Button>
+			</div>
+		</div>
 		<div className='flex items-center mb-8 mx-auto'>
 			<Tab element={mode} elements={Object.values(Mode)} setElement={setMode}/>
 		</div>
@@ -83,9 +93,21 @@ export default function Page() {
 									<Area width={40} height={28}/>
 								</td>
 								<td className='w-[20px]'>
-									<Button buttonSize={ButtonSize.Small} buttonColor={ButtonColor.Black}>
-										<Svg className='w-3 h-3 bg-white' src='/fontawesome/svgs/light/plus.svg'/>
-									</Button>
+									{stocks.find(s => s.id === stock.id) ?
+										<Button buttonSize={ButtonSize.Small} buttonColor={ButtonColor.Black}
+												onClick={() => {
+													removeStock(stock);
+												}}>
+											<Svg className='w-3 h-3 bg-white' src='/fontawesome/svgs/light/minus.svg'/>
+										</Button>
+										:
+										<Button buttonSize={ButtonSize.Small} buttonColor={ButtonColor.Black}
+												onClick={() => {
+													addStock(stock);
+												}}>
+											<Svg className='w-3 h-3 bg-white' src='/fontawesome/svgs/light/plus.svg'/>
+										</Button>
+									}
 								</td>
 							</tr>
 						})}

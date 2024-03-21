@@ -6,7 +6,7 @@ import MultiStepProgressBar from '@/components/MultiStepProgressbar/MultiStepPro
 import { Button, ButtonColor } from '@/components/elements';
 import { STOCKS } from '@/utils/const';
 
-function Card(pickStock: any, page: number, stock: Stock) {
+function Card(stocks: any[], pickStock: any, page: number, stock: Stock) {
   const ref = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(600);
   useEffect(() => {
@@ -19,11 +19,10 @@ function Card(pickStock: any, page: number, stock: Stock) {
       resizeObserver.observe(ref.current);
     }
   }, []);
-
   return <div ref={ref}
-      className='max-w-screen-md w-full cursor-pointer
-          bg-white shadow hover:drop-shadow-glow transition-all
-          rounded-lg mx-auto'
+      className={`max-w-screen-md w-full cursor-pointer
+          bg-white shadow ${stocks.some(item => item && item.id === stock.id) && 'drop-shadow-glow'} hover:drop-shadow-glow transition-all
+          rounded-lg mx-auto`}
       onClick={(e) => {
         pickStock(page, stock);
       }}>
@@ -80,6 +79,7 @@ export default function Home() {
   const [yourStocks, setYourStocks] = useState([null, null, null, null, null]);
 
   function pickStock(p: number, stock: Stock) {
+    console.log('hi');
     setYourStocks((yourStock: any) => {
       const newList = [...yourStock];
       newList[p] = stock;
@@ -125,21 +125,10 @@ export default function Home() {
       </div>
     </div>
     <div className='grid grid-cols-2 gap-8 mt-8 mb-8'>
-      {Card(pickStock, page, STOCKS[2 * page])}
-      {Card(pickStock, page, STOCKS[2 * page + 1])}
+      {Card(yourStocks, pickStock, page, STOCKS[2 * page])}
+      {Card(yourStocks, pickStock, page, STOCKS[2 * page + 1])}
     </div>
-      {/* {
-        {
-          pageone: <>{Card(stocks[2 * page])}{Card(stocks[2 * page + 1])}</>,
-          pagetwo: <PageTwo onButtonClick={nextPage} />,
-          pagethree: <PageThree onButtonClick={nextPage} />,
-          pagefour: <PageFour />,
-        }[page]
-      } */}
-    {/* <div className='grid grid-cols-2 gap-8'>
-      {Card(stocks[0])}
-      {Card(stocks[1])}
-    </div> */}
+    
     {!yourStocks.includes(null) && 
       <Button buttonColor={ButtonColor.Black} onClick={(e) => {
         e.stopPropagation();
