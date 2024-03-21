@@ -13,7 +13,6 @@ import { timeFormat } from '@visx/vendor/d3-time-format';
 
 type TooltipData = AppleStock;
 
-const stock = appleStock.slice(800);
 export const background = '#3b6978';
 export const background2 = '#204051';
 export const accentColor = '#32CD32';
@@ -25,6 +24,7 @@ const tooltipStyles = {
   color: 'white',
 };
 
+
 // util
 const formatDate = timeFormat("%b %d, '%y");
 
@@ -34,6 +34,7 @@ const getStockValue = (d: AppleStock) => d.close;
 const bisectDate = bisector<AppleStock, Date>((d) => new Date(d.date)).left;
 
 export type AreaProps = {
+  stock: AppleStock[]
   width: number;
   height: number;
   margin?: { top: number; right: number; bottom: number; left: number };
@@ -41,8 +42,10 @@ export type AreaProps = {
 
 export default withTooltip<AreaProps, TooltipData>(
   ({
+    stock,
     width,
     height,
+
     margin = { top: 0, right: 0, bottom: 0, left: 0 },
     showTooltip,
     hideTooltip,

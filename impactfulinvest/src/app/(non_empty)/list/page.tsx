@@ -3,9 +3,10 @@ import React, { useRef, useEffect, useState, useContext } from 'react';
 import { Button, ButtonColor, ButtonShape, ButtonSize, Input, InputType, Svg } from '@/components/elements';
 import Radar from '@/components/charts/radar';
 import { Tab } from '@/components/elements/tab';
-import { STOCKS } from '@/utils/const';
+import { STOCKS, dataToStockFake } from '@/utils/const';
 import Area from '@/components/charts/area';
 import {AppContext} from '@/context/AppContext';
+import { Stock } from '@/models/stock';
 
 enum Mode {
 	ALL = 'All',
@@ -18,6 +19,19 @@ export default function Page() {
   const ref = useRef<HTMLDivElement>(null);
 	const [mode, setMode] = useState(Mode.YOUR_PREFERENCES);
   const [chartWidth, setChartWidth] = useState(600);
+
+	const [stockRecs, setStockRecs] = useState<Stock[]>([]);
+
+
+	async function fetchData() {
+		const res = await fetch('http://127.0.0.1:5000/api/recommendation')
+		const resJ = await res.json();
+		const temp = resJ.map((data: any) => {
+			return dataToStockFake(data);
+		})
+		setStockRecs(temp);
+	}
+	
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
       if (ref.current) {
@@ -27,7 +41,13 @@ export default function Page() {
     if (ref.current) {
       resizeObserver.observe(ref.current);
     }
+
+		fetchData();
   }, []);
+
+	if (stockRecs.length === 0) {
+		return;
+	}
 
   return <div className='max-w-screen-lg pb-8 mx-auto'>
 		<div className='flex justify-between'>
@@ -59,14 +79,15 @@ export default function Page() {
 							<th className='text-left'>Issuer</th>
 							<th className='text-left'>ESG Score</th>
 							<th className='text-left'>Water</th>
-							<th className='text-left'>Food</th>
-							<th className='text-left'>Energy</th>
+							<th className='text-left'>Biodiv</th>
+							<th className='text-left'>Env</th>
+							<th className='text-left'>Fossil</th>
 							<th className='text-left'>Chart</th>
 							<th className='text-left'>Add</th>
 						</tr>
 					</thead>
 					<tbody>
-						{STOCKS.map((stock, i) => {
+						{stockRecs.map((stock, i) => {
 							return <tr className='py-2 h-[40px]' key={i}>
 								<td>
 									{i}
@@ -84,13 +105,16 @@ export default function Page() {
 									{stock.stockScore['Water']}
 								</td>
 								<td>
-									{stock.stockScore['Energy']}
+									{stock.stockScore['Biodiv']}
 								</td>
 								<td>
-									{stock.stockScore['Food']}
+									{stock.stockScore['Env']}
+								</td>
+								<td>
+									{stock.stockScore['Fossil']}
 								</td>
 								<td className='h-[32px]'>
-									<Area width={40} height={28}/>
+									<Area stock={stock.history} width={40} height={28}/>
 								</td>
 								<td className='w-[20px]'>
 									{stocks.find(s => s.id === stock.id) ?

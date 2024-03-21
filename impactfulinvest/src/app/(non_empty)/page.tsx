@@ -4,9 +4,10 @@ import Area from '@/components/charts/area';
 import Svg from '@/components/elements/svg';
 import MultiStepProgressBar from '@/components/MultiStepProgressbar/MultiStepProgressbar';
 import { Button, ButtonColor } from '@/components/elements';
-import { STOCKS } from '@/utils/const';
+import { STOCKS, dataToStock } from '@/utils/const';
+import { Stock } from '@/models/stock';
 
-function Card(stocks: any[], pickStock: any, page: number, stock: Stock) {
+function Card(stocks: any[], pickStock: any, page: number, allStocks: Stock[], stock: Stock | null) {
   const ref = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(600);
 
@@ -21,26 +22,28 @@ function Card(stocks: any[], pickStock: any, page: number, stock: Stock) {
     }
   }, []);
 
-
+  if (!stock) {
+    return;
+  }
   return <div ref={ref}
       className={`max-w-screen-md w-full cursor-pointer
           bg-white shadow ${stocks.some(item => item && item.id === stock.id) && 'drop-shadow-glow'} hover:drop-shadow-glow transition-all
           rounded-lg mx-auto`}
       onClick={(e) => {
-        pickStock(page, stock);
+        pickStock(page, allStocks, stock);
       }}>
     <div className='p-8'>
       <h2>
         {stock.name}
       </h2>
       <h2 className='font-semibold'>
-        $14
+        {stock.price}
       </h2>
       <h4 className='text-green-500 font-semibold'>
-        +2.3%(+0.32)
+        +({Math.trunc((stock.price - stock.history[0].close) / stock.history[0].close * 100 * 100) / 100})% ({Math.trunc((stock.price - stock.history[0].close) * 100) / 100})
       </h4>
     </div>
-    <Area width={chartWidth} height={300}/>
+    <Area stock={stock.history} width={chartWidth} height={300}/>
     <div className='p-8'>
       <div className='flex flex-row items-center mb-4'>
         <h3 className='font-semibold'>
@@ -53,9 +56,9 @@ function Card(stocks: any[], pickStock: any, page: number, stock: Stock) {
       <div className='grid grid-cols-3 gap-4 mb-6'>
         {
           Object.entries(stock.stockScore).map(([key, score]) => (
-            <div className='flex flex-row items-center text-sm' key={key}>
+            <div className='flex flex-row justify-between items-center text-sm' key={key}>
               {key}
-              <div className='rounded-full bg-green-500 text-white px-4 py-1 ml-2'>
+              <div className='rounded-full bg-green-500 text-white px-4 py-1 ml-2 mr-4'>
                 {score}
               </div>
             </div>
@@ -79,52 +82,49 @@ function Card(stocks: any[], pickStock: any, page: number, stock: Stock) {
 
 export default function Home() {
   const [page, setPage] = useState(0);
-  const [compStock, setStock] = useState([null, null]);
+  const [compStock, setStock] = useState<(Stock | null)[]>([null, null]);
   const [yourStocks, setYourStocks] = useState([null, null, null, null, null]);
 
-  function pickStock(p: number, stock: Stock) {
+  async function pickStock(p: number, stocks: Stock[], stock: Stock) {
     setYourStocks((yourStock: any) => {
       const newList = [...yourStock];
       newList[p] = stock;
       return newList;
     });
+    await fetch('http://127.0.0.1:5000/api/update-preferences', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        pair: [stocks[0].id, stocks[1].id],
+        preference: stock.id,
+      }),
+    })
     setPage((oldPage: number) => {
       if (oldPage === (STOCKS.length / 2) - 1) {
         return oldPage;
       }
       return oldPage + 1
     });
+    setStock([null, null]);
+    getSuggestions();
   }
 
   async function getSuggestions() {
+
     const res = await fetch('http://127.0.0.1:5000/api/compare-suggestion');
     const recs = await res.json();
+    console.log(recs);
+    const stock0 = await dataToStock(recs[0]);
+    const stock1 = await dataToStock(recs[1]);
 
-    const res2 = await fetch(`http://127.0.0.1:5000/api/esg-data?isin=${recs[0]}`);
-    const stock1 = await res2.json();
-    console.log(stock1);
-
-    const res3 = await fetch(`http://127.0.0.1:5000/api/esg-data?isin=${recs[1]}`);
-    const stock2 = await res3.json();
-    console.log(stock2);
-
-    const openai0 = await fetch(`http://127.0.0.1:5000/api/openAI?isin=${recs[0]}`);
-    console.log(openai0);
-
-    const openai1 = await fetch(`http://127.0.0.1:5000/api/openAI?isin=${recs[1]}`);
-    console.log(openai1);
-
-    setStock([stock1, stock2]);
+    setStock([stock0 as Stock, stock1 as Stock]);
   }
 
   useEffect(() => {
     getSuggestions();
   }, []);
-  if (!compStock[0]) {
-    return <div>
-      Loading
-    </div>
-  }
 
   return <div className='pb-8'>
     <h1 className='text-center mb-8'>
@@ -136,8 +136,8 @@ export default function Home() {
       </h3>
     </div>
     <div className='grid grid-cols-2 gap-8 mt-8 mb-8'>
-      {Card(yourStocks, pickStock, page, STOCKS[2 * page])}
-      {Card(yourStocks, pickStock, page, STOCKS[2 * page + 1])}
+      {Card(yourStocks, pickStock, page, compStock as Stock[], compStock[0])}
+      {Card(yourStocks, pickStock, page, compStock as Stock[], compStock[1])}
     </div>
     
     {!yourStocks.includes(null) && 

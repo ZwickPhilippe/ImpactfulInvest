@@ -1,17 +1,14 @@
-interface Stock {
+import { AppleStock } from '@visx/mock-data/lib/mocks/appleStock';
+
+export interface Stock {
 	id: string;
 	name: string;
 	issuer: string;
 	price: number;
 	description: string;
-	history: StockHistory[];
+	history: AppleStock[];
 	esg: number;
 	stockScore: Record<string, number>;
-}
-
-interface StockHistory {
-	date: string;
-	price: number;
 }
 
 interface StockScore {

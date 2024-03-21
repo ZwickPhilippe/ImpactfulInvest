@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+
 import numpy as np
 import pandas as pd
 from repository import ESGData, FinancialDataAPI
@@ -8,7 +10,7 @@ import json
 from openAI_service import AIService
 
 app = Flask(__name__)
-
+CORS(app)
 esgData = pd.read_csv("../data/Data_Full.csv", delimiter=";")
 
 esg = ESGData(esgData)

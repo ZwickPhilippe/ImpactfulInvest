@@ -1,3 +1,6 @@
+import appleStock, { AppleStock } from '@visx/mock-data/lib/mocks/appleStock';
+import { Stock } from '../models/stock';
+
 export const BACKEND_URL = process.env.NEXT_PUBLIC_ANALYTICS_ID || 'http://localhost:8000'
 export const BACKEND_URL_GRAPHQL = process.env.NEXT_PUBLIC_BACKEND_URL_GRAPHQL || 'http://localhost:8000/graphql'
 export const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6Lc6LcUaAAAAAKe3Z4Q4Z4Q4Z4Q4Z4Q4Z4Q4Z4Q4'
@@ -432,3 +435,57 @@ export const STOCKS: Stock[] = [
 		},
 	},
 ]
+
+export async function dataToStock(data: any): Promise<Stock> {
+	// "2010-06-10T07:00:00.000Z"
+	let last = Object.keys(data.stock_data)[Object.keys(data.stock_data).length-1];
+	let stock0 = {
+		id: data.ISIN_BC,
+		name: data.FISN,
+		issuer: data.companyDomicile,
+		price: data.stock_data[last],
+		esg:  Math.trunc((data['Biodiversity'] + data['Environmental'] + data['Fossil fuels'] + data['Greenhouse gas emissions'] + data['Social'] + data['Waste'] + data['Water']) * 10000) / 10000,
+		history: Object.entries(data.stock_data).map(([date, price]) => {
+			return {
+				date: date + 'T07:00:00.000Z',
+				close: price as number
+			} as AppleStock
+		}),
+		description: 'idk',
+		stockScore: {
+			'Biodiv': Math.trunc(data['Biodiversity'] * 10000) / 10000,
+			'Env': Math.trunc(data['Environmental'] * 10000) / 10000,
+			'Fossil': Math.trunc(data['Fossil fuels'] * 10000) / 10000,
+			'GGE': Math.trunc(data['Greenhouse gas emissions'] * 10000) / 10000,
+			'Social': Math.trunc(data['Social'] * 10000) / 10000,
+			'Waste': Math.trunc(data['Waste'] * 10000) / 10000,
+			'Water': Math.trunc(data['Water'] * 10000) / 10000,
+		},
+	}
+	stock0['description'] = await (await fetch(`http://127.0.0.1:5000/api/openAI?isin=${data.ISIN_BC}`)).text();
+	return stock0 as Stock;
+}
+
+
+export function dataToStockFake(data: any): Stock {
+	// "2010-06-10T07:00:00.000Z"
+	let stock0 = {
+		id: data.ISIN_BC,
+		name: data.FISN,
+		issuer: data.companyDomicile,
+		price: 12,
+		esg:  Math.trunc((data['Biodiversity'] + data['Environmental'] + data['Fossil fuels'] + data['Greenhouse gas emissions'] + data['Social'] + data['Waste'] + data['Water']) * 10000) / 10000,
+		history: appleStock.slice(300),
+		description: 'idk',
+		stockScore: {
+			'Biodiv': Math.trunc(data['Biodiversity'] * 10000) / 10000,
+			'Env': Math.trunc(data['Environmental'] * 10000) / 10000,
+			'Fossil': Math.trunc(data['Fossil fuels'] * 10000) / 10000,
+			'GGE': Math.trunc(data['Greenhouse gas emissions'] * 10000) / 10000,
+			'Social': Math.trunc(data['Social'] * 10000) / 10000,
+			'Waste': Math.trunc(data['Waste'] * 10000) / 10000,
+			'Water': Math.trunc(data['Water'] * 10000) / 10000,
+		},
+	}
+	return stock0 as Stock;
+}

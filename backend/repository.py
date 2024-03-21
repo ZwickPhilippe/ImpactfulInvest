@@ -119,5 +119,5 @@ class FinancialDataAPI:
                         closing_price = history["close"]
                     date = history["sessionDate"]
                     closing_prices[listing_name][date] = closing_price
-        print(closing_price)
+        # print(closing_price)
         return closing_prices
