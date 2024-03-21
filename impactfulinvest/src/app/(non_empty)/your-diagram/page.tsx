@@ -5,6 +5,7 @@ import Svg from '@/components/elements/svg';
 import MultiStepProgressBar from '@/components/MultiStepProgressbar/MultiStepProgressbar';
 import { Button, ButtonColor, Input, InputType } from '@/components/elements';
 import Radar from '@/components/charts/radar';
+import { Chip, Flex, Text, List, Title } from '@mantine/core';
 
 export default function Page() {
   const ref = useRef<HTMLDivElement>(null);
@@ -29,11 +30,22 @@ export default function Page() {
 		{ key: "NO2", value: + 100 },
 		{ key: "AQI", value: + 100 },
 	]);
-  return <div className='pb-8'>
-    <h1 className='text-center mb-8'>
-      Your values
-    </h1>
-		<div
+  return <>
+  
+  <Flex
+      direction={{ base: 'column', sm: 'row' }}
+      gap={{ base: 'sm', sm: 'lg' }}
+      justify={{ sm: 'center' }}
+	  mb = "md"
+    >
+      <Title order={3}>These are your preferences</Title>
+	      
+		  </Flex>
+  
+  <div className='pb-8'>
+
+
+			<div
       className='w-full max-w-screen-lg cursor-pointer
           bg-white shadow transition-all
           rounded-lg mx-auto p-8'
@@ -82,4 +94,5 @@ export default function Page() {
 			</div>
 		</div>
   </div>
+  </>
 }
