@@ -41,9 +41,9 @@ def get_stock_data():
 @app.route('/api/esg-data', methods=['GET'])
 def get_esg_data():
     isin = request.args.get("isin")
-    esg_data = esg.getESGdata(isin)
-    data = json.loads(jsonify(esg_data))
-    data['stock_data'] = fin.provideEndOfDayHistory("ISIN_BC", isin, "2023-03-22", "2024-03-22")
+    data = esg.getESGdata(isin)
+    print(data, flush=True)
+    data['stock_data'] = fin.provideEndOfDayHistory("ISIN_BC", isin, "2023-03-21", "2024-03-21")
     return jsonify(data)
 
 @app.route('/api/recommendation', methods=['GET'])
