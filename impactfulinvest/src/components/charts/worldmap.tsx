@@ -30,7 +30,7 @@ const color = scaleQuantize({
     Math.min(...world.features.map((f) => f.geometry.coordinates.length)),
     Math.max(...world.features.map((f) => f.geometry.coordinates.length)),
   ],
-  range: ['#ffb01d', '#ffa020', '#ff9221', '#ff8424', '#ff7425', '#fc5e2f', '#f94b3a', '#f63a48'],
+  range: ['#e5ffe5', '#00e500', '#7fff7f', '#4cff4c', '#ffffff', '#00cc00', '#00b200', '#00e500'],
 });
 
 export default function ({ width, height, events = false }: GeoMercatorProps) {
