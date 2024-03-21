@@ -8,7 +8,6 @@ import React, {
   RefAttributes,
 } from "react";
 import {
-Button,
   Chip,
   Flex,
   Text,
@@ -21,6 +20,7 @@ Button,
 } from "@mantine/core";
 import { RadarChart } from "@mantine/charts";
 import classes from "./your-diagram.module.css";
+import { Button, ButtonColor, ButtonSize } from '@/components/elements';
 
 
 export default function Page() {
@@ -214,17 +214,23 @@ const [data, setData] = useState([
 		label="Water"
         min={0}
         max={100}
-		onChange={(e) => {
-			setData((oldData) => {
-				const newData = [...oldData];
-				let x = e;
-				const indexToUpdate = newData.findIndex(obj => obj.esgclassifier === "Water");
-				newData[indexToUpdate].sales = parseInt(e+"")
-				return newData;
-			})	
-		}} 
+				onChange={(e) => {
+					setData((oldData) => {
+						const newData = [...oldData];
+						let x = e;
+						const indexToUpdate = newData.findIndex(obj => obj.esgclassifier === "Water");
+						newData[indexToUpdate].sales = parseInt(e+"")
+						return newData;
+					})}} 
         />
-		
+		<div>
+			<Button className='mt-4' buttonColor={ButtonColor.Black} buttonSize={ButtonSize.Small} onClick={() => {
+				console.log(data);
+				window.location.href = '/list';
+			}}>
+				Save
+			</Button>
+		</div>
       </Grid.Col>
     </Grid>
 	</Paper>
