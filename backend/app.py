@@ -76,6 +76,12 @@ def getOpenAI():
     print(data, flush=True)
     return aiService.getSummaryOfESGData(data)
 
+@app.route('/api/portfolio-summary', methods=['GET'])
+def getPortfolioSummary():
+    data = request.get_json()
+    portfolio = data["portfolio"]
+    portfolio = getWholeData(portfolio)
+    return aiService.getPortfolioSummary(portfolio)
 
 if __name__ == '__main__':
     app.run(debug=True)

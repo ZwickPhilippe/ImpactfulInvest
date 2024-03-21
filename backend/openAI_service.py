@@ -40,7 +40,7 @@ class AIService:
     
 
     def getPortfolioSummary(self, portfolio):
-        prompt = f"""Briefly explain how ESG compliant my Porfolio of Funds is (You get the portfolio as a list of strings of ISINs): \n {portfolio}."""
+        prompt = f"""Briefly explain how ESG compliant my Porfolio of Funds is (You get the portfolio as a list of json obects containing isin and several other characteristics of the fund. All numerical values are scores between 0 and 1): \n {portfolio}."""
         
         response = self.client.chat.completions.create(
             model=self.chatgpt_model_name,
