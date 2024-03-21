@@ -4,8 +4,9 @@ import Area from '@/components/charts/area';
 import Svg from '@/components/elements/svg';
 import MultiStepProgressBar from '@/components/MultiStepProgressbar/MultiStepProgressbar';
 import { Button, ButtonColor } from '@/components/elements';
+import { STOCKS } from '@/utils/const';
 
-function Card(pickStock: any, page: number, stock: Stock) {
+function Card(stocks: any[], pickStock: any, page: number, stock: Stock) {
   const ref = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(600);
   useEffect(() => {
@@ -18,11 +19,10 @@ function Card(pickStock: any, page: number, stock: Stock) {
       resizeObserver.observe(ref.current);
     }
   }, []);
-
   return <div ref={ref}
-      className='max-w-screen-md w-full cursor-pointer
-          bg-white shadow hover:drop-shadow-glow transition-all
-          rounded-lg mx-auto'
+      className={`max-w-screen-md w-full cursor-pointer
+          bg-white shadow ${stocks.some(item => item && item.id === stock.id) && 'drop-shadow-glow'} hover:drop-shadow-glow transition-all
+          rounded-lg mx-auto`}
       onClick={(e) => {
         pickStock(page, stock);
       }}>
@@ -76,358 +76,17 @@ function Card(pickStock: any, page: number, stock: Stock) {
 
 export default function Home() {
   const [page, setPage] = useState(0);
-  const stocks: Stock[] = [
-    {
-      id: '1',
-      name: 'Stock A',
-      price: 14,
-      description: 'This is a stock description',
-      history: [
-        {
-          date: '2021-01-01',
-          price: 10,
-        },
-        {
-          date: '2021-01-02',
-          price: 12,
-        },
-        {
-          date: '2021-01-03',
-          price: 14,
-        },
-        {
-          date: '2021-01-04',
-          price: 13,
-        },
-        {
-          date: '2021-01-05',
-          price: 15,
-        },
-      ],
-      esg: 9,
-      stockScore: {
-        'Water': 7,
-        'Food': 6,
-        'Energy': 8,
-      },
-    },
-    {
-      id: '1',
-      name: 'Stock A',
-      price: 14,
-      description: 'This is a stock description',
-      history: [
-        {
-          date: '2021-01-01',
-          price: 10,
-        },
-        {
-          date: '2021-01-02',
-          price: 12,
-        },
-        {
-          date: '2021-01-03',
-          price: 14,
-        },
-        {
-          date: '2021-01-04',
-          price: 13,
-        },
-        {
-          date: '2021-01-05',
-          price: 15,
-        },
-      ],
-      esg: 9,
-      stockScore: {
-        'Water': 7,
-        'Food': 6,
-        'Energy': 8,
-      },
-    },
-    {
-      id: '1',
-      name: 'Stock A',
-      price: 14,
-      description: 'This is a stock description',
-      history: [
-        {
-          date: '2021-01-01',
-          price: 10,
-        },
-        {
-          date: '2021-01-02',
-          price: 12,
-        },
-        {
-          date: '2021-01-03',
-          price: 14,
-        },
-        {
-          date: '2021-01-04',
-          price: 13,
-        },
-        {
-          date: '2021-01-05',
-          price: 15,
-        },
-      ],
-      esg: 9,
-      stockScore: {
-        'Water': 7,
-        'Food': 6,
-        'Energy': 8,
-      },
-    },
-    {
-      id: '2',
-      name: 'Stock B',
-      price: 20,
-      description: 'This is a stock description',
-      history: [
-        {
-          date: '2021-01-01',
-          price: 20,
-        },
-        {
-          date: '2021-01-02',
-          price: 22,
-        },
-        {
-          date: '2021-01-03',
-          price: 24,
-        },
-        {
-          date: '2021-01-04',
-          price: 23,
-        },
-        {
-          date: '2021-01-05',
-          price: 25,
-        },
-      ],
-      esg: 9,
-      stockScore: {
-        'Water': 7,
-        'Food': 6,
-        'Energy': 8,
-      },
-    },
-    {
-      id: '1',
-      name: 'Stock A',
-      price: 14,
-      description: 'This is a stock description',
-      history: [
-        {
-          date: '2021-01-01',
-          price: 10,
-        },
-        {
-          date: '2021-01-02',
-          price: 12,
-        },
-        {
-          date: '2021-01-03',
-          price: 14,
-        },
-        {
-          date: '2021-01-04',
-          price: 13,
-        },
-        {
-          date: '2021-01-05',
-          price: 15,
-        },
-      ],
-      esg: 9,
-      stockScore: {
-        'Water': 7,
-        'Food': 6,
-        'Energy': 8,
-      },
-    },
-    {
-      id: '2',
-      name: 'Stock B',
-      price: 20,
-      description: 'This is a stock description',
-      history: [
-        {
-          date: '2021-01-01',
-          price: 20,
-        },
-        {
-          date: '2021-01-02',
-          price: 22,
-        },
-        {
-          date: '2021-01-03',
-          price: 24,
-        },
-        {
-          date: '2021-01-04',
-          price: 23,
-        },
-        {
-          date: '2021-01-05',
-          price: 25,
-        },
-      ],
-      esg: 9,
-      stockScore: {
-        'Water': 7,
-        'Food': 6,
-        'Energy': 8,
-      },
-    },
-    {
-      id: '1',
-      name: 'Stock A',
-      price: 14,
-      description: 'This is a stock description',
-      history: [
-        {
-          date: '2021-01-01',
-          price: 10,
-        },
-        {
-          date: '2021-01-02',
-          price: 12,
-        },
-        {
-          date: '2021-01-03',
-          price: 14,
-        },
-        {
-          date: '2021-01-04',
-          price: 13,
-        },
-        {
-          date: '2021-01-05',
-          price: 15,
-        },
-      ],
-      esg: 9,
-      stockScore: {
-        'Water': 7,
-        'Food': 6,
-        'Energy': 8,
-      },
-    },
-    {
-      id: '2',
-      name: 'Stock B',
-      price: 20,
-      description: 'This is a stock description',
-      history: [
-        {
-          date: '2021-01-01',
-          price: 20,
-        },
-        {
-          date: '2021-01-02',
-          price: 22,
-        },
-        {
-          date: '2021-01-03',
-          price: 24,
-        },
-        {
-          date: '2021-01-04',
-          price: 23,
-        },
-        {
-          date: '2021-01-05',
-          price: 25,
-        },
-      ],
-      esg: 9,
-      stockScore: {
-        'Water': 7,
-        'Food': 6,
-        'Energy': 8,
-      },
-    },
-    {
-      id: '1',
-      name: 'Stock A',
-      price: 14,
-      description: 'This is a stock description',
-      history: [
-        {
-          date: '2021-01-01',
-          price: 10,
-        },
-        {
-          date: '2021-01-02',
-          price: 12,
-        },
-        {
-          date: '2021-01-03',
-          price: 14,
-        },
-        {
-          date: '2021-01-04',
-          price: 13,
-        },
-        {
-          date: '2021-01-05',
-          price: 15,
-        },
-      ],
-      esg: 9,
-      stockScore: {
-        'Water': 7,
-        'Food': 6,
-        'Energy': 8,
-      },
-    },
-    {
-      id: '2',
-      name: 'Stock B',
-      price: 20,
-      description: 'This is a stock description',
-      history: [
-        {
-          date: '2021-01-01',
-          price: 20,
-        },
-        {
-          date: '2021-01-02',
-          price: 22,
-        },
-        {
-          date: '2021-01-03',
-          price: 24,
-        },
-        {
-          date: '2021-01-04',
-          price: 23,
-        },
-        {
-          date: '2021-01-05',
-          price: 25,
-        },
-      ],
-      esg: 9,
-      stockScore: {
-        'Water': 7,
-        'Food': 6,
-        'Energy': 8,
-      },
-    },
-  ]
   const [yourStocks, setYourStocks] = useState([null, null, null, null, null]);
 
   function pickStock(p: number, stock: Stock) {
+    console.log('hi');
     setYourStocks((yourStock: any) => {
       const newList = [...yourStock];
       newList[p] = stock;
       return newList;
     });
     setPage((oldPage: number) => {
-      if (oldPage === (stocks.length / 2) - 1) {
+      if (oldPage === (STOCKS.length / 2) - 1) {
         return oldPage;
       }
       return oldPage + 1
@@ -451,36 +110,25 @@ export default function Home() {
             src='/fontawesome/svgs/light/chevron-left.svg'/>
       </div>
       <h3 className='unselectable text-gray-500'>
-        {page + 1} / {stocks.length / 2}
+        {page + 1} / {STOCKS.length / 2}
       </h3>
       <div onClick={() => {
         setPage((oldPage: number) => {
-          if (oldPage === (stocks.length / 2) - 1) {
+          if (oldPage === (STOCKS.length / 2) - 1) {
             return oldPage;
           }
           return oldPage + 1;
         });
       }}>
-        <Svg className={`ml-2 bg-gray-400 hover:bg-black cursor-pointer w-4 h-4 ${ page === (stocks.length / 2) - 1 && 'invisible'}`}
+        <Svg className={`ml-2 bg-gray-400 hover:bg-black cursor-pointer w-4 h-4 ${ page === (STOCKS.length / 2) - 1 && 'invisible'}`}
             src='/fontawesome/svgs/light/chevron-right.svg'/>
       </div>
     </div>
     <div className='grid grid-cols-2 gap-8 mt-8 mb-8'>
-      {Card(pickStock, page, stocks[2 * page])}
-      {Card(pickStock, page, stocks[2 * page + 1])}
+      {Card(yourStocks, pickStock, page, STOCKS[2 * page])}
+      {Card(yourStocks, pickStock, page, STOCKS[2 * page + 1])}
     </div>
-      {/* {
-        {
-          pageone: <>{Card(stocks[2 * page])}{Card(stocks[2 * page + 1])}</>,
-          pagetwo: <PageTwo onButtonClick={nextPage} />,
-          pagethree: <PageThree onButtonClick={nextPage} />,
-          pagefour: <PageFour />,
-        }[page]
-      } */}
-    {/* <div className='grid grid-cols-2 gap-8'>
-      {Card(stocks[0])}
-      {Card(stocks[1])}
-    </div> */}
+    
     {!yourStocks.includes(null) && 
       <Button buttonColor={ButtonColor.Black} onClick={(e) => {
         e.stopPropagation();

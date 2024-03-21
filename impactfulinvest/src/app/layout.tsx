@@ -1,8 +1,9 @@
 'use client';
 import '@/app/globals.css'
+import '@mantine/core/styles.css';
+import '@mantine/charts/styles.css';
 import AppProvider from '@/context/AppContext';
 import NotificationProvider from '@/context/NotificationContext';
-
 
 export default function RootLayout({
   children,

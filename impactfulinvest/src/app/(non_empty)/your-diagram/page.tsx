@@ -1,85 +1,240 @@
-'use client';
-import React, { useMemo, useCallback, useRef, useEffect, useState, RefAttributes } from 'react';
-import Area from '@/components/charts/area';
-import Svg from '@/components/elements/svg';
-import MultiStepProgressBar from '@/components/MultiStepProgressbar/MultiStepProgressbar';
-import { Button, ButtonColor, Input, InputType } from '@/components/elements';
-import Radar from '@/components/charts/radar';
+"use client";
+import React, {
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+  useState,
+  RefAttributes,
+} from "react";
+import {
+  Chip,
+  Flex,
+  Text,
+  List,
+  Title,
+  NumberInput,
+  Grid,
+  Divider,
+  Paper,
+} from "@mantine/core";
+import { RadarChart } from "@mantine/charts";
+import classes from "./your-diagram.module.css";
+import { Button, ButtonColor, ButtonSize } from '@/components/elements';
+
 
 export default function Page() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [chartWidth, setChartWidth] = useState(600);
-  useEffect(() => {
-    const resizeObserver = new ResizeObserver(() => {
-      if (ref.current) {
-        setChartWidth(ref.current.offsetWidth);
-      }
-    });
-    if (ref.current) {
-      resizeObserver.observe(ref.current);
-    }
-  }, []);
-	const [data, setData] = useState([
-		{ key: "PM10", value: 100 },
-		{ key: "PM2.5", value: + 100 },
-		{ key: "SO2", value: + 100 },
-		{ key: "CO", value: + 100 },
-		{ key: "NO2", value: + 100 },
-		{ key: "AQI", value: + 100 },
-		{ key: "NO2", value: + 100 },
-		{ key: "AQI", value: + 100 },
-	]);
-  return <div className='pb-8'>
-    <h1 className='text-center mb-8'>
-      Your values
-    </h1>
-		<div
-      className='w-full max-w-screen-lg cursor-pointer
-          bg-white shadow transition-all
-          rounded-lg mx-auto p-8'
-      onClick={(e) => {
-      }}>
-			<div className='grid grid-cols-2 gap-4'>
-				<div ref={ref} className='flex justify-center items-center w-full'>
-					<div style={{height: chartWidth, width: chartWidth}}>
-						<Radar data={data} width={chartWidth} height={chartWidth} />
-					</div>
-				</div>
-				<div className='grid grid-cols-2 gap-4'>
-					{data.map((d, i) => {
-						return <Input
-								value={d.value.toString()}
-								min={0}
-								max={100}
-								onChange={(e) => {
-									setData((oldData) => {
-										const newData = [...oldData];
-										let x = 0;
-										try {
-											x = parseInt(e.target.value);
-										} catch (e) {
+  //   const ref = useRef<HTMLDivElement>(null);
+  //   const [chartWidth, setChartWidth] = useState(600);
+  //   useEffect(() => {
+  //     const resizeObserver = new ResizeObserver(() => {
+  //       if (ref.current) {
+  //         setChartWidth(ref.current.offsetWidth);
+  //       }
+  //     });
+  //     if (ref.current) {
+  //       resizeObserver.observe(ref.current);
+  //     }
+  //   }, []);
 
-										}
-										if (!e.target.value ) {
-											x = 0;	
-										}
-										newData[i] = {key: d.key, value: x};
-										return newData;
-									})	
-								}} 
-								label={d.key}
-								type={InputType.Basic}/>
-					})}
-				</div>
-				<div className=''>
-					<h3>
-						What this chart tells us about you
-					</h3>
-					<div>
+//   onChange={(e) => {
+// 	setData((oldData) => {
+// 		const newData = [...oldData];
+// 		let x = 0;
+// 		try {
+// 			x = parseInt(e.target.value);
+// 		} catch (e) {
 
-					</div>
-				</div>
-			</div>
+// 		}
+// 		if (!e.target.value ) {
+// 			x = 0;	
+// 		}
+// 		newData[i] = {key: d.key, value: x};
+// 		return newData;
+// 	})	
+// }} 
+const [data, setData] = useState([
+    {
+      esgclassifier: "Greenhouse Gas Emissions",
+      sales: 100,
+    },
+    {
+      esgclassifier: "Environmental",
+      sales: 98,
+    },
+    {
+      esgclassifier: "Waste",
+      sales: 86,
+    },
+    {
+      esgclassifier: "SDFR scoping",
+      sales: 99,
+    },
+    {
+      esgclassifier: "Social",
+      sales: 85,
+    },
+    {
+      esgclassifier: "Fossil fuels",
+      sales: 65,
+    },
+    {
+      esgclassifier: "Biodiversity",
+      sales: 65,
+    },
+    {
+      esgclassifier: "Water",
+      sales: 65,
+    },
+  ]);
+  return (
+	<>
+	<Title order={1} mb="md"> Your preferences</Title>
+	<Paper radius="md" withBorder className={classes.card} mt={20}>
+	<Grid>
+      <Grid.Col span={6}>
+        <RadarChart
+          h={300}
+          data={data}
+          dataKey="esgclassifier"
+          withPolarRadiusAxis
+          series={[{ name: "sales", color: "green.4", opacity: 0.2 }]}
+        />
+      </Grid.Col>
+      <Grid.Col span={3}>
+        <NumberInput
+		size="xs"
+		label="Greenhouse Gas Emissions"
+        min={0}
+        max={100}
+		onChange={(e) => {
+			setData((oldData) => {
+				const newData = [...oldData];
+				let x = e;
+				const indexToUpdate = newData.findIndex(obj => obj.esgclassifier === "Greenhouse Gas Emissions");
+				newData[indexToUpdate].sales = parseInt(e+"")
+				return newData;
+			})	
+		}} 
+        />
+		<NumberInput
+		size="xs"
+		label="Environmental"
+        min={0}
+        max={100}
+		onChange={(e) => {
+			setData((oldData) => {
+				const newData = [...oldData];
+				let x = e;
+				const indexToUpdate = newData.findIndex(obj => obj.esgclassifier === "Environmental");
+				newData[indexToUpdate].sales = parseInt(e+"")
+				return newData;
+			})	
+		}} 
+        />
+		<NumberInput
+		size="xs"
+		label="Waste"
+        min={0}
+        max={100}
+		onChange={(e) => {
+			setData((oldData) => {
+				const newData = [...oldData];
+				let x = e;
+				const indexToUpdate = newData.findIndex(obj => obj.esgclassifier === "Waste");
+				newData[indexToUpdate].sales = parseInt(e+"")
+				return newData;
+			})	
+		}} 
+        />
+		<NumberInput
+		size="xs"
+		label="SDFR scoping"
+        min={0}
+        max={100}
+		onChange={(e) => {
+			setData((oldData) => {
+				const newData = [...oldData];
+				let x = e;
+				const indexToUpdate = newData.findIndex(obj => obj.esgclassifier === "SDFR scoping");
+				newData[indexToUpdate].sales = parseInt(e+"")
+				return newData;
+			})	
+		}} 
+        />
+      </Grid.Col>
+	  <Grid.Col span={3}>
+        <NumberInput
+		size="xs"
+		label="Social"
+        min={0}
+        max={100}
+		onChange={(e) => {
+			setData((oldData) => {
+				const newData = [...oldData];
+				let x = e;
+				const indexToUpdate = newData.findIndex(obj => obj.esgclassifier === "Social");
+				newData[indexToUpdate].sales = parseInt(e+"")
+				return newData;
+			})	
+		}} 
+        />
+		<NumberInput
+		size="xs"
+		label="Fossil fuels"
+        min={0}
+        max={100}
+		onChange={(e) => {
+			setData((oldData) => {
+				const newData = [...oldData];
+				let x = e;
+				const indexToUpdate = newData.findIndex(obj => obj.esgclassifier === "Fossil fuels");
+				newData[indexToUpdate].sales = parseInt(e+"")
+				return newData;
+			})	
+		}} 
+        />
+		<NumberInput
+		size="xs"
+		label="Biodiversity"
+        min={0}
+        max={100}
+		onChange={(e) => {
+			setData((oldData) => {
+				const newData = [...oldData];
+				let x = e;
+				const indexToUpdate = newData.findIndex(obj => obj.esgclassifier === "Biodiversity");
+				newData[indexToUpdate].sales = parseInt(e+"")
+				return newData;
+			})	
+		}} 
+        />
+		<NumberInput
+		size="xs"
+		label="Water"
+        min={0}
+        max={100}
+				onChange={(e) => {
+					setData((oldData) => {
+						const newData = [...oldData];
+						let x = e;
+						const indexToUpdate = newData.findIndex(obj => obj.esgclassifier === "Water");
+						newData[indexToUpdate].sales = parseInt(e+"")
+						return newData;
+					})}} 
+        />
+		<div>
+			<Button className='mt-4' buttonColor={ButtonColor.Black} buttonSize={ButtonSize.Small} onClick={() => {
+				console.log(data);
+				window.location.href = '/list';
+			}}>
+				Save
+			</Button>
 		</div>
-  </div>
+      </Grid.Col>
+    </Grid>
+	</Paper>
+    
+	</>
+  );
 }

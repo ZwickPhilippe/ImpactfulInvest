@@ -1,6 +1,7 @@
 interface Stock {
 	id: string;
 	name: string;
+	issuer: string;
 	price: number;
 	description: string;
 	history: StockHistory[];
