@@ -5,6 +5,7 @@ from repository import ESGData, FinancialDataAPI
 from util.RecommenderSystem import Recommender
 from typing import List
 import json
+from openAI_service import AIService
 
 app = Flask(__name__)
 
@@ -13,6 +14,7 @@ esgData = pd.read_csv("../data/Data_Full.csv", delimiter=";")
 esg = ESGData(esgData)
 fin = FinancialDataAPI("../api-keys")
 recommender = Recommender(esgData[["ISIN_BC","Biodiversity","Environmental","Fossil fuels","Greenhouse gas emissions","Scoping according to SFDR annex template","Social","Waste","Water"]], gamma=0.2)
+aiService = AIService()
 
 # Simulate stock time series data as a list of 100 numbers
 def generate_stock_data():
@@ -66,6 +68,14 @@ def updatePreferences():
     preference = data["preference"]
     recommender.updatePreferences(pair, preference)
     return "OK"
+
+@app.route('/api/openAI', methods=['GET'])
+def getOpenAI():
+    isin = request.args.get("isin")
+    data = getWholeData([isin])[0]
+    print(data, flush=True)
+    return aiService.getSummaryOfESGData(data)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
