@@ -78,5 +78,10 @@ class FinancialDataAPI:
         data_dict = {}
         if data["lookupStatus"] == "FOUND":
             for day in data["marketData"]["endOfDayHistory"]:
-                data_dict[day["sessionDate"]] = day["closingBid"]
+                if "closingBid" in day:
+                    data_dict[day["sessionDate"]] = day["closingBid"]
+                elif "last" in day:
+                    data_dict[day["sessionDate"]] = day["last"]
+                elif "close" in day:
+                    data_dict[day["sessionDate"]] = day["close"]
         return data_dict
