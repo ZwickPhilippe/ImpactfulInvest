@@ -8,11 +8,11 @@ import json
 
 app = Flask(__name__)
 
-esgData = pd.read_csv("../data/ESGData.csv", delimiter=";")
+esgData = pd.read_csv("../data/Data_Full.csv", delimiter=";")
 
 esg = ESGData(esgData)
 fin = FinancialDataAPI("../api-keys")
-recommender = Recommender(esgData, gamma=0.2)
+recommender = Recommender(esgData[["ISIN_BC","Biodiversity","Environmental","Fossil fuels","Greenhouse gas emissions","Scoping according to SFDR annex template","Social","Waste","Water"]], gamma=0.2)
 
 # Simulate stock time series data as a list of 100 numbers
 def generate_stock_data():
