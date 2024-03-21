@@ -31,27 +31,33 @@ export default function Page() {
     }
   }, []);
 
-  return <div
-			className={`max-w-screen-xl w-full cursor-pointer
-			bg-white shadow transition-all
-			rounded-lg p-8 mx-auto`}>
-		<h2>
-			{stock.name}
-		</h2>
-		<h2 className='font-semibold'>
-			$14
-		</h2>
-		<h4 className='text-green-500 font-semibold'>
-			+2.3%(+0.32)
-		</h4>
-		<div className='grid grid-cols-2 gap-8'>
-			<div ref={ref}>
-				<Area width={chartWidth} height={300}/>
+  return <div className={`max-w-screen-xl w-full mx-auto`}>
+		<div className='grid grid-cols-2 gap-8 mb-8'>
+			<div className='bg-white shadow rounded-lg p-8 '>
+				<h2>
+					{stock.name}
+				</h2>
+				<h2 className='font-semibold'>
+					$14
+				</h2>
+				<h4 className='text-green-500 font-semibold'>
+					+2.3%(+0.32)
+				</h4>
+				<div ref={ref}>
+					<Area width={chartWidth} height={300}/>
+				</div>
 			</div>
-			<div>
-				<Worldmap width={chartWidth} height={300}/>
+
+			<div className='bg-white shadow rounded-lg p-8'>
+				<h2 className='font-semibold mb-4'>
+					Distribution of underlying assets
+				</h2>
+				<Worldmap width={chartWidth - 100} height={200}/>
 			</div>
-			<div>
+		</div>
+
+		<div className='grid grid-cols-3 gap-8 mb-8'>
+			<div className='bg-white shadow rounded-lg p-8'>
 				<div className='flex flex-row items-center mb-4'>
 					<h3 className='font-semibold'>
 						ESG Rating
@@ -73,17 +79,52 @@ export default function Page() {
 					}
 				</div>
 			</div>
-			<div className='mb-8'>
-				{stock.description}
+			<div className='bg-white shadow rounded-lg p-8 col-span-2'>
+				<h3 className='font-semibold'>
+					Description
+				</h3>
+				<div>
+					{stock.description}
+				</div>
 			</div>
 		</div>
-		<div>
-			<h3 className='font-semibold'>
+		
+		<div className='bg-white shadow rounded-lg p-8'>
+			<h3 className='font-semibold mb-2'>
 				News
 			</h3>
-			<div>
+			<div className='grid grid-cols-3 gap-8'>
+				<div className='rounded-lg'>
+					<img src='/l1.png' className='rounded-lg aspect-[2/1] object-cover mb-2'/>
+					<h4 className='font-semibold text-sm'>
+						Global Shift: Major Banks Pledge to Greener Investments
+					</h4>
+					<div className='text-sm'>
+						This article discusses a new initiative by several of the world's largest banks to significantly increase their funding of green projects and decrease investments in fossil fuel-related industries, aiming to align their portfolios more closely with global climate goals.
+					</div>
+				</div>			
 
-			</div>
+				<div className='rounded-lg'>
+					<img src='/l2.png' className='rounded-lg aspect-[2/1] object-cover mb-2'/>
+					<h4 className='font-semibold text-sm'>
+						Innovative ESG ETF Launches to Target Clean Energy and Social Equity
+					</h4>
+					<div className='text-sm'>
+					The launch of a new Exchange-Traded Fund (ETF) focused on investing in companies that excel in clean energy production and promote social equity, offering investors a chance to contribute positively to environmental and social issues through their investments.
+					</div>
+				</div>	
+
+				<div className='rounded-lg'>
+					<img src='/l3.png' className='rounded-lg aspect-[2/1] object-cover mb-2'/>
+					<h4 className='font-semibold text-sm'>
+						Corporate Governance Reforms: A New Dawn for Responsible Investing
+					</h4>
+					<div className='text-sm'>
+						This piece explores recent reforms in corporate governance aimed at enhancing transparency and accountability. These reforms are designed to encourage companies to adopt more sustainable and responsible business practices, signaling a positive development for investors concerned with ESG factors.
+					</div>
+				</div>	
+			</div>				
+			
 		</div>
 	</div>
 }

@@ -9,6 +9,7 @@ import { STOCKS } from '@/utils/const';
 function Card(stocks: any[], pickStock: any, page: number, stock: Stock) {
   const ref = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(600);
+
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
       if (ref.current) {
@@ -19,6 +20,8 @@ function Card(stocks: any[], pickStock: any, page: number, stock: Stock) {
       resizeObserver.observe(ref.current);
     }
   }, []);
+
+
   return <div ref={ref}
       className={`max-w-screen-md w-full cursor-pointer
           bg-white shadow ${stocks.some(item => item && item.id === stock.id) && 'drop-shadow-glow'} hover:drop-shadow-glow transition-all
@@ -76,10 +79,10 @@ function Card(stocks: any[], pickStock: any, page: number, stock: Stock) {
 
 export default function Home() {
   const [page, setPage] = useState(0);
+  const [compStock, setStock] = useState([null, null]);
   const [yourStocks, setYourStocks] = useState([null, null, null, null, null]);
 
   function pickStock(p: number, stock: Stock) {
-    console.log('hi');
     setYourStocks((yourStock: any) => {
       const newList = [...yourStock];
       newList[p] = stock;
@@ -93,36 +96,36 @@ export default function Home() {
     });
   }
 
+  async function getSuggestions() {
+    const res = await fetch('http://127.0.0.1:5000/api/compare-suggestion');
+    const recs = await res.json();
+
+    const res2 = await fetch(`http://127.0.0.1:5000/api/esg-data?isin=${recs[0]}`);
+    const stock1 = await res2.json();
+
+    const res3 = await fetch(`http://127.0.0.1:5000/api/esg-data?isin=${recs[1]}`);
+    const stock2 = await res3.json();
+    console.log(stock1);
+    console.log(stock2);
+  }
+
+  useEffect(() => {
+    getSuggestions();
+  }, []);
+  if (!compStock[0]) {
+    return <div>
+      Loading
+    </div>
+  }
+
   return <div className='pb-8'>
     <h1 className='text-center mb-8'>
       Pick your prefered stock
     </h1>
     <div className='flex justify-center items-center'>
-      <div onClick={() => {
-        setPage((oldPage: number) => {
-          if (oldPage === 0) {
-            return oldPage;
-          }
-          return oldPage - 1;
-        });
-      }}>
-        <Svg className={`mr-2 bg-gray-400 hover:bg-black cursor-pointer w-4 h-4 ${ page === 0 && 'invisible'}`}
-            src='/fontawesome/svgs/light/chevron-left.svg'/>
-      </div>
       <h3 className='unselectable text-gray-500'>
         {page + 1} / {STOCKS.length / 2}
       </h3>
-      <div onClick={() => {
-        setPage((oldPage: number) => {
-          if (oldPage === (STOCKS.length / 2) - 1) {
-            return oldPage;
-          }
-          return oldPage + 1;
-        });
-      }}>
-        <Svg className={`ml-2 bg-gray-400 hover:bg-black cursor-pointer w-4 h-4 ${ page === (STOCKS.length / 2) - 1 && 'invisible'}`}
-            src='/fontawesome/svgs/light/chevron-right.svg'/>
-      </div>
     </div>
     <div className='grid grid-cols-2 gap-8 mt-8 mb-8'>
       {Card(yourStocks, pickStock, page, STOCKS[2 * page])}
