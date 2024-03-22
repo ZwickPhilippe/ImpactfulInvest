@@ -17,3 +17,4 @@ interface StockScore {
 	food: number;
 	energy: number;
 }
+

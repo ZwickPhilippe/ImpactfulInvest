@@ -43,7 +43,7 @@ function Card(stocks: any[], pickStock: any, page: number, allStocks: Stock[], s
         +({Math.trunc((stock.price - stock.history[0].close) / stock.history[0].close * 100 * 100) / 100})% ({Math.trunc((stock.price - stock.history[0].close) * 100) / 100})
       </h4>
     </div>
-    <Area stock={stock.history} width={chartWidth} height={300}/>
+    <Area stock={stock.history} width={chartWidth+100} height={300}/>
     <div className='p-8'>
       <div className='flex flex-row items-center mb-4'>
         <h3 className='font-semibold'>

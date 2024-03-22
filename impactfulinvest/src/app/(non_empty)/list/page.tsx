@@ -7,6 +7,7 @@ import { STOCKS, dataToStockFake } from '@/utils/const';
 import Area from '@/components/charts/area';
 import {AppContext} from '@/context/AppContext';
 import { Stock } from '@/models/stock';
+import Link from 'next/link';
 
 enum Mode {
 	ALL = 'All',
@@ -55,12 +56,14 @@ export default function Page() {
 				Stocks which could be interesting to you
 			</h1>
 			<div className='w-40'>
-				<Button disabled={stocks.length === 0}
-						buttonColor={ButtonColor.Black}
-						buttonShape={ButtonShape.Round}
-						buttonSize={ButtonSize.Small}>
-					Your porfolio ({stocks.length})
-				</Button>
+				<Link href='/details'>
+					<Button disabled={stocks.length === 0}
+							buttonColor={ButtonColor.Black}
+							buttonShape={ButtonShape.Round}
+							buttonSize={ButtonSize.Small}>
+						Your portfolio ({stocks.length})
+					</Button>
+				</Link>
 			</div>
 		</div>
 		<div className='flex items-center mb-8 mx-auto'>

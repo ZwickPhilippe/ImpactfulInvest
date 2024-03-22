@@ -1,5 +1,7 @@
 'use client';
 import React, { useRef, useEffect, useState, useContext } from 'react';
+import appleStock, { AppleStock } from '@visx/mock-data/lib/mocks/appleStock';
+
 import { Button, ButtonColor, ButtonShape, ButtonSize, Input, InputType, Svg } from '@/components/elements';
 import Radar from '@/components/charts/radar';
 import { Tab } from '@/components/elements/tab';
@@ -15,11 +17,11 @@ enum Mode {
 
 export default function Page() {
 	const {stocks, addStock, removeStock} = useContext(AppContext);
-
   const ref = useRef<HTMLDivElement>(null);
 	const [mode, setMode] = useState(Mode.YOUR_PREFERENCES);
   const [chartWidth, setChartWidth] = useState(600);
 	const stock = STOCKS[0];
+	const [description, setDescription] = useState('');
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
       if (ref.current) {
@@ -29,22 +31,33 @@ export default function Page() {
     if (ref.current) {
       resizeObserver.observe(ref.current);
     }
+		let x = {'portfolio': stocks.map(stock => stock.name)};
+		fetch('http://127.0.0.1:5000/api/portfolio-summary', {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			method: 'POST',
+			body: JSON.stringify(x),
+		}).then(res => res.text()).then(data => {
+			console.log(data);
+			setDescription(data);
+		});
   }, []);
 
   return <div className={`max-w-screen-xl w-full mx-auto`}>
 		<div className='grid grid-cols-2 gap-8 mb-8'>
 			<div className='bg-white shadow rounded-lg p-8 '>
 				<h2>
-					{stock.name}
+					Your portfolio
 				</h2>
 				<h2 className='font-semibold'>
-					$14
+					$14.28
 				</h2>
 				<h4 className='text-green-500 font-semibold'>
 					+2.3%(+0.32)
 				</h4>
 				<div ref={ref}>
-					<Area width={chartWidth} height={300}/>
+					<Area stock={appleStock} width={chartWidth} height={300}/>
 				</div>
 			</div>
 
@@ -52,7 +65,7 @@ export default function Page() {
 				<h2 className='font-semibold mb-4'>
 					Distribution of underlying assets
 				</h2>
-				<Worldmap width={chartWidth - 100} height={200}/>
+				<Worldmap width={chartWidth - 140} height={200}/>
 			</div>
 		</div>
 
@@ -63,16 +76,16 @@ export default function Page() {
 						ESG Rating
 					</h3>
 					<div className='rounded-full bg-green-500 text-white px-4 py-1 ml-2'>
-						{stock.esg}
+						{Math.trunc(stocks.reduce((sum, stock) => sum + stock.esg, 0) / stocks.length * 10000) / 10000}
 					</div>
 				</div>
 				<div className='grid grid-cols-3 gap-4 mb-6'>
 					{
-						Object.entries(stock.stockScore).map(([key, score]) => (
-							<div className='flex flex-row items-center text-sm' key={key}>
+						Object.entries(stocks[0].stockScore).map(([key, score]) => (
+							<div className='flex flex-row justify-between items-center text-sm' key={key}>
 								{key}
 								<div className='rounded-full bg-green-500 text-white px-4 py-1 ml-2'>
-									{score}
+									{Math.trunc(stocks.reduce((sum, stock) => sum + stock.stockScore[key], 0) / stocks.length * 10000) / 10000}
 								</div>
 							</div>
 						))
@@ -84,7 +97,7 @@ export default function Page() {
 					Description
 				</h3>
 				<div>
-					{stock.description}
+					{description}
 				</div>
 			</div>
 		</div>
